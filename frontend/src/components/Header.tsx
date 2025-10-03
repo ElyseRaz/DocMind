@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -45,17 +46,17 @@ export default function Header() {
 
       {/* Boutons d'authentification */}
       <div className="flex items-center space-x-3">
-        <button className="group relative overflow-hidden bg-transparent text-blue-600 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:bg-blue-50">
+        <Link to="/login" className="group relative overflow-hidden bg-transparent text-blue-600 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:bg-blue-50" >
           <span className="relative z-10">Connexion</span>
-        </button>
-        
-        <button className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform">
+        </Link>
+
+        <Link to="/register" className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 transform">
           <span className="relative z-10">Inscription</span>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           
           {/* Effet de brillance */}
           <div className="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-        </button>
+        </Link>
       </div>
 
       {/* Indicateur de scroll subtil */}
