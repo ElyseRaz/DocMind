@@ -26,7 +26,7 @@ export default function Dashboard() {
             let finalSummary = data.summary;
 
             if (format === 'tableau'){
-                finalSummary = finalSummary.split("").map((s,i)=>`${i+1}. ${s}`).join("\n");
+                finalSummary = finalSummary.split("").map((s: any,i: number)=>`${i+1}. ${s}`).join("\n");
             }else if(format === 'carte'){
                 finalSummary = finalSummary
                 .split(". ")
