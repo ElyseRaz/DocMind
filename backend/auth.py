@@ -1,8 +1,13 @@
+from database import database
+from models import users
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from passlib.context import CryptContext 
 from jose import jwt
 import time
+
+load_dotenv()
 
 router = APIRouter()
 
@@ -25,19 +30,23 @@ def create_token(email: str):
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 @router.post("/register")
-def register(user: User):
-    if user.email in users_db:
+async def register(user: User):
+    query=users.select().where(users.c.email==user.email)
+    existing_user = await database.fetch_one(query)
+    if existing_user:
         raise HTTPException(status_code=400, detail="Utilisateur déjà existant")
     hashed_pwd = pwd_context.hash(user.password)
-    users_db[user.email] = {"email": user.email, "password": hashed_pwd, "username": user.username}
-    return {"msg": "Utilisateur enregistré avec succès"}
+    query=users.insert().values(username=user.username, email=user.email, hashed_password=hashed_pwd) 
+    await database.execute(query)
+    return {"message": "Utilisateur enregistré avec succès"}
 
 @router.post("/login")
-def login(user: User):
-    if user.email not in users_db:
+async def login(user: User):
+    query=users.select().where(users.c.email==user.email)
+    existing_user = await database.fetch_one(query)
+    if not existing_user:
         raise HTTPException(status_code=400, detail="Utilisateur non trouvé")
-    hashed_pwd = users_db[user.email]
-    if not pwd_context.verify(user.password,hashed_pwd):
+    if not pwd_context.verify(user.password, existing_user.hashed_password):
         raise HTTPException(status_code=400, detail="Mot de passe incorrect")
     token = create_token(user.email)
-    return {"access_token" : token}
+    return {"access_token" : token,"username":existing_user.username,"user_id":existing_user.id}

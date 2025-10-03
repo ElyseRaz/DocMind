@@ -8,6 +8,8 @@ import openpyxl
 from io import BytesIO
 from pptx import Presentation
 import docx
+from models import history, users
+from databases import Database
 
 
 load_dotenv()
@@ -101,3 +103,17 @@ async def upload_file(file: UploadFile = File(...), user=Depends(verify_token)):
         "summary": final_summary,
         "chunks_used": len(chunks)
     }
+    
+    user_query = users.select().where(users.c.email == user_email)
+    user_db = await database.fetch_one(user_query)
+    user_id = user_db.id if user_db else None
+    
+    insert_query = history.insert().values(
+        user_id=user_id,
+        file_name=file.filename,
+        file_type=file.filename.split(".")[-1],
+        format=format,
+        summary=final_summary
+    )
+    
+    await database.execute(insert_query)
